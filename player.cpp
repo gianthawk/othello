@@ -50,10 +50,25 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 	 }
      board.doMove(opponentsMove, oppSide);
      //pick random x and random y
-     int x, y;
-     Move *player_move;
+     //int x, y;
+     //Move *player_move;
    
-     if(board.hasMoves(player_side)){
+	 Move *highest_scoring;
+	 //Move *player_move;
+	 int highest_score;
+	 for(i = 0; i < 8; i++){
+		 for(j = 0; j < 8; j++){
+			 Move player_move = Move(i, j);
+			 if(board.checkMove(player_move)){
+				 
+			 }
+			 
+		 }
+		 
+		 
+	 }
+    
+    /* if(board.hasMoves(player_side)){
 		do{
 			x = rand() % 8 + 1;
 			y = rand() % 8 + 1;
@@ -62,7 +77,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 		
 		return player_move;
 	}
-	
+	*/
      
     return nullptr;
 }
