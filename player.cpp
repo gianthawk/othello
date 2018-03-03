@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include <climits>
 //made a change
 // testing - mn
 /*
@@ -50,35 +51,47 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 		 oppSide = BLACK; 
 	 }
      board.doMove(opponentsMove, oppSide);
-     //pick random x and random y
-     //int x, y;
-     //Move *player_move;
-   
-	 Move *highest_scoring;
-	 //Move *player_move;
-	 int highest_score;
-	 for(i = 0; i < 8; i++){
-		 for(j = 0; j < 8; j++){
-			 Move player_move = Move(i, j);
-			 if(board.checkMove(player_move)){
+     
+	 Move *highest_scoring = nullptr;
+	 Move *player_move;
+	 
+	 int highest_score = INT_MIN;
+	 for(int i = 0; i < 8; i++){
+		 for(int j = 0; j < 8; j++){
+			 player_move = new Move(i, j);
+			 if(board.checkMove(player_move, player_side)){
+				 int score = board.count(player_side) - board.count(oppSide);
+				 //corner
+				 if((i==0 && j==0) || (i == 7 && j == 0) || (i == 0 && j == 7) || (i == 7 && j == 7)){
+					score *= 3; 
+				 // quadrant 1
+				 }else if((i == 0 && j == 1 )|| (i == 1 && (j == 0 || j == 1))){
+					 score *= -3;
+				// quadrant 2
+				 } else if((i == 6 && (j == 0 || j == 1)) || (i == 7 && j == 1)){
+					 score *= -3;
+				 //quadrant 3
+				 }else if((i == 0 && j == 6 )|| (i == 1 && (j == 6 || j == 7))){
+					 score *= -3;
+					 // quadrant 4
+				 }else if((i == 6 && (j == 6 || j == 7) )|| (i == 7 && j == 6)){
+					 score *= -3;
+				 }
 				 
+				 if(score > highest_score){
+					 highest_scoring = player_move;
+					 highest_score = score;
+				 }
 			 }
 			 
 		 }
 		 
 		 
 	 }
-    
-    /* if(board.hasMoves(player_side)){
-		do{
-			x = rand() % 8 + 1;
-			y = rand() % 8 + 1;
-			player_move = new Move(x, y);
-		}while(!board.checkMove(player_move, player_side));
-		
-		return player_move;
-	}
-	*/
+	 
+	//cerr << "move: " << highest_scoring->x << ", " << highest_scoring->y << endl;
+	board.doMove(highest_scoring, player_side);
+    return highest_scoring;
      
-    return nullptr;
+    
 }
