@@ -66,8 +66,13 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 			 // If the move is valid
 			 if(board.checkMove(player_move, player_side))
 			 {
-				 // Assign a base score based on the difference between number of pieces on the board 
-				 int score = board.count(player_side) - board.count(oppSide);
+				 // Create temp board to simulate the move
+				 Board *temp_board = board.copy();
+				 temp_board->doMove(player_move, player_side);
+				 
+				 // Assign a base score based on the difference between 
+				 // number of pieces on the board after the move has been made
+				 int score = temp_board->count(player_side) - temp_board->count(oppSide);
 				 
 				 // Apply multipliers based on the cell location on the board
 				 // and how favorable a move at that location would be.
@@ -75,7 +80,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 				 // Corner squares are most preferable since these can never be captured
 				 if((i==0 && j==0) || (i == 7 && j == 0) || (i == 0 && j == 7) || (i == 7 && j == 7))
 				 {
-					score *= 3; 
+					score *= 5; 
 				 }
 				 // Squares adjacent to corners are worse - negative multiplier
 				 // quadrant 1
@@ -103,7 +108,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 				 // by other edge pieces - slightly favorable
 				 else if((i == 0) || (i == 7) || (j == 0) || (j == 7))
 				 {
-					 score *= 2;
+					 score *= 3;
 				 }
 
 				 // Set the highest score to this possible move
@@ -112,6 +117,9 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 					 highest_scoring = player_move;
 					 highest_score = score;
 				 }
+				 
+				 // Clean up
+				 delete temp_board;
 			 }
 		 }
 	 }
