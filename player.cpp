@@ -21,7 +21,8 @@ Player::Player(Side side)
 /*
  * Destructor for the player.
  */
-Player::~Player() {
+Player::~Player() 
+{
 }
 
 /*
@@ -71,12 +72,12 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 				 // Apply multipliers based on the cell location on the board
 				 // and how favorable a move at that location would be.
 				 
-				 // corner - most preferable since these can never be captured
+				 // Corner squares are most preferable since these can never be captured
 				 if((i==0 && j==0) || (i == 7 && j == 0) || (i == 0 && j == 7) || (i == 7 && j == 7))
 				 {
 					score *= 3; 
 				 }
-				 // squares adjacent to corners are worse - negative multiplier
+				 // Squares adjacent to corners are worse - negative multiplier
 				 // quadrant 1
 				 else if((i == 0 && j == 1 )|| (i == 1 && (j == 0 || j == 1)))
 				 {
@@ -102,11 +103,9 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 				 // by other edge pieces - slightly favorable
 				 else if((i == 0) || (i == 7) || (j == 0) || (j == 7))
 				 {
-					 score *= 3;
+					 score *= 2;
 				 }
-				 
-				 
-				 
+
 				 // Set the highest score to this possible move
 				 if(score > highest_score)
 				 {
@@ -114,15 +113,11 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 					 highest_score = score;
 				 }
 			 }
-			 
 		 }
-		 
-		 
 	 }
 	 
 	//cerr << "move: " << highest_scoring->x, << ", " << highest_scoring->y << endl;
 	board.doMove(highest_scoring, player_side);
+	
     return highest_scoring;
-     
-    
 }
