@@ -38,6 +38,42 @@ Player::~Player()
  * The move returned must be legal; if there are no valid moves for your side,
  * return nullptr.
  */
+ 
+Move *minimax(Move *opponentsMove, int msLeft){
+ // Assign sides to each player
+     Side oppSide = WHITE;
+     if(player_side == WHITE)
+     {
+		 oppSide = BLACK; 
+	 }
+	 
+	 // Process opponent's move
+     board.doMove(opponentsMove, oppSide);
+     
+     // Initialize variables
+	 Move *highest_scoring = nullptr;
+	 vector<Move *> possible_player_moves;
+	 int highest_score = INT_MIN;
+	 
+	 // Iterate through all board cells to get all possible player moves
+	 for(int i = 0; i < 8; i++)
+	 {
+		 for(int j = 0; j < 8; j++)
+		 {
+			 player_move = new Move(i, j);
+			 
+			 // If the move is valid
+			 if(board.checkMove(player_move, player_side))
+			 {
+				 possible_player_moves.push_back(player_moves);	 
+				 
+				}
+	}	
+	
+	
+	}
+}
+
 Move *Player::doMove(Move *opponentsMove, int msLeft) 
 {
 
