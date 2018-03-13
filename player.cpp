@@ -29,20 +29,16 @@ Player::~Player()
 }
 
 /*
- * Compute the next move given the opponent's last move. Your AI is
- * expected to keep track of the board on its own. If this is the first move,
- * or if the opponent passed on the last move, then opponentsMove will be
- * nullptr.
- *
- * msLeft represents the time your AI has left for the total game, in
- * milliseconds. doMove() must take no longer than msLeft, or your AI will
- * be disqualified! An msLeft value of -1 indicates no time limit.
- *
- * The move returned must be legal; if there are no valid moves for your side,
- * return nullptr.
+ * The minimax function implements a recursive algorithm for selecting
+ * the Othello move that will maximize our eventual score, where the
+ * base case is a previously selected depth of the decision tree, and
+ * the recursive step repeatedly calls the minimax function at 
+ * increasing depths. This also incorporates our previous heuristic 
+ * algorithm based on Othello strategy.
  */
  
 Move *Player::minimax(Move *currentMove, int msLeft, int depth){
+	
 	//Assign sides to each player
     Side oppSide = WHITE;
     if(player_side == WHITE)
@@ -58,6 +54,7 @@ Move *Player::minimax(Move *currentMove, int msLeft, int depth){
 		vector<Move *> possible_moves;
 		Move *temp_move;
 		
+		// Get all possible moves
 		for(int i = 0; i < 8; i++)
 		{
 			for(int j = 0; j < 8; j++)
@@ -72,6 +69,7 @@ Move *Player::minimax(Move *currentMove, int msLeft, int depth){
 			}		
 		}
 		
+		// use heuristic to return the move with minimum score
 		for(unsigned int i = 0; i < possible_moves.size(); i++)
 		{
 			Board *temp_board = board.copy();
@@ -164,10 +162,13 @@ Move *Player::minimax(Move *currentMove, int msLeft, int depth){
 		int max_score = INT_MIN;
 		unsigned int max_move_index = 0;
 		
+		// Use heuristic to return the move with maximum score
 		// Iterate thru all possible moves
 		for(unsigned int i = 0; i < possible_moves.size(); i++)
 		{
 			Board *temp_board = board.copy();
+			
+			// Recursive call at depth + 1
 			temp_board->doMove(minimax(possible_moves[i], msLeft, depth + 1), this->player_side);
 			
 			int score = temp_board->count(player_side) - temp_board->count(oppSide);
