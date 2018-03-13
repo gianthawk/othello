@@ -8,6 +8,8 @@
  * on (BLACK or WHITE) is passed in as "side". The constructor must finish
  * within 30 seconds.
  */
+ int MINIMAX_DEPTH = 2;
+ Board *temp_board;
 Player::Player(Side side) 
 {
     // Will be set to true in test_minimax.cpp.
@@ -39,22 +41,55 @@ Player::~Player()
  * return nullptr.
  */
  
-Move *minimax(Move *opponentsMove, int msLeft){
- // Assign sides to each player
+Move *minimax(Move *currentMove, int msLeft, int depth){
+	// Assign sides to each player
      Side oppSide = WHITE;
      if(player_side == WHITE)
      {
 		 oppSide = BLACK; 
 	 }
 	 
-	 // Process opponent's move
-     board.doMove(opponentsMove, oppSide);
+	//base case: if depth is MINIMAX_DEPTH - return move with lowest score
+	if(depth == MINIMAX_DEPTH){
+		int max_score = INT_MIN;
+		Move *max_score_move = nullptr;
+		vector<Move *> possible_moves;
+		 for(int i = 0; i < 8; i++)
+		{
+		 for(int j = 0; j < 8; j++)
+			{
+				move = new Move(i, j);
+			 
+				// If the move is valid
+				if(board.checkMove(move, player_side))
+					{
+						possible_moves.push_back(move);	 
+				 
+					}
+			}		
+		}
+		
+		for(int i = 0; i < possible_moves.size(); i++){
+			//Board *temp_board = board.copy();
+			temp_board->doMove(possible_moves[i], oppSide);
+				 
+				 // Assign a base score based on the difference between 
+				 // number of pieces on the board after the move has been made
+			int score = temp_board->count(player_side) - temp_board->count(oppSide);
+			if(score > min_score){
+				max_score = score;
+				max_score_move = move;
+			}
+		}
+		
+		return min_score_move;
+	}
+
+	 
      
      // Initialize variables
-	 Move *highest_scoring = nullptr;
-	 vector<Move *> possible_player_moves;
-	 int highest_score = INT_MIN;
-	 
+	
+	 vector<Move *> possible_moves;
 	 // Iterate through all board cells to get all possible player moves
 	 for(int i = 0; i < 8; i++)
 	 {
@@ -65,12 +100,19 @@ Move *minimax(Move *opponentsMove, int msLeft){
 			 // If the move is valid
 			 if(board.checkMove(player_move, player_side))
 			 {
-				 possible_player_moves.push_back(player_moves);	 
+				 possible_moves.push_back(player_move);	 
 				 
 				}
 	}	
+		
+	}
 	
-	
+	for(int i = 0; i < possible_moves.size(); i++){
+		Board *temp_board = new Board();
+		temp_board.doMove(possible_moves[i], player_side);
+		//int score = temp_board->count(player_side) - temp_board->count(oppSide);
+		minimax(possible_moves[i], msLeft, depth + 1);
+		
 	}
 }
 
