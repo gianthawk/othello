@@ -1,5 +1,7 @@
 #include "player.hpp"
 #include <climits>
+#include <vector>
+using namespace std;
 //made a change
 // testing - mn
 
@@ -8,12 +10,12 @@
  * on (BLACK or WHITE) is passed in as "side". The constructor must finish
  * within 30 seconds.
  */
- int MINIMAX_DEPTH = 2;
+ 
  Board *temp_board;
 Player::Player(Side side) 
 {
     // Will be set to true in test_minimax.cpp.
-    testingMinimax = false;
+    testingMinimax = true;
      
      //initialize board
      board = Board();
@@ -40,7 +42,90 @@ Player::~Player()
  * The move returned must be legal; if there are no valid moves for your side,
  * return nullptr.
  */
- 
+
+Move *Player::minimax_iterative(){
+	
+	// Assign sides to each player
+     Side oppSide = WHITE;
+     if(player_side == WHITE)
+     {
+		 oppSide = BLACK; 
+	 }
+	
+	int max_score = INT_MIN;
+	Move *max_score_move = nullptr;
+	
+	vector<Move *> possible_moves;
+	for(int i = 0; i < 8; i++)
+		{
+		 for(int j = 0; j < 8; j++)
+			{
+				Move *move = new Move(i, j);
+			 
+				// If the move is valid
+				if(board.checkMove(move, player_side))
+					{
+						possible_moves.push_back(move);	 
+				 
+					}
+			}		
+		}
+		
+		if(possible_moves.size() == 1){
+			board.doMove(possible_moves[0], player_side);
+			return possible_moves[0];
+			
+		}
+		cerr << "Num possible move: " << possible_moves.size() << endl;
+
+	
+	for(unsigned int i = 0; i < possible_moves.size(); i++){
+		Board *temp_board = board.copy();
+		 temp_board->doMove(possible_moves[i], player_side);
+		 int depth_1_score = temp_board->count(player_side) - temp_board->count(oppSide);
+		 
+		 vector<Move *> possible_opp_moves;
+		 for(int i = 0; i < 8; i++)
+		{
+		 for(int j = 0; j < 8; j++)
+			{
+				Move *opp_move = new Move(i, j);
+			 
+				// If the move is valid
+				if(temp_board->checkMove(opp_move, oppSide))
+					{
+						possible_opp_moves.push_back(opp_move);	 
+				 
+					}
+			}		
+		}
+				cerr << "Num possible opp move: " << possible_opp_moves.size() << endl;
+
+		for(unsigned int j = 0; j < possible_opp_moves.size(); j++){
+			Board *temp2 = temp_board->copy();
+			temp2->doMove(possible_opp_moves[j], oppSide);
+			int depth_2_score = temp2->count(player_side) - temp2->count(oppSide);
+			if(depth_1_score + depth_2_score > max_score){
+				max_score = depth_1_score + depth_2_score;
+				max_score_move = possible_moves[i];
+			}
+			
+			delete temp2;
+			
+			
+		}
+		
+		delete temp_board;
+	}
+	
+	//cerr << "move: " << max_score_move->x << ", " << max_score_move->y << endl;
+	
+	board.doMove(max_score_move, player_side);
+	return max_score_move;
+	
+}
+
+/*
 Move *minimax(Move *currentMove, int msLeft, int depth){
 	// Assign sides to each player
      Side oppSide = WHITE;
@@ -115,6 +200,8 @@ Move *minimax(Move *currentMove, int msLeft, int depth){
 		
 	}
 }
+*/
+
 
 Move *Player::doMove(Move *opponentsMove, int msLeft) 
 {
@@ -129,10 +216,16 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 	 // Process opponent's move
      board.doMove(opponentsMove, oppSide);
      
+     if(testingMinimax){
+		 
+		 return minimax_iterative();
+	 }
+	 else
+	 {
      // Initialize variables
-	 Move *highest_scoring = nullptr;
-	 Move *player_move;
-	 int highest_score = INT_MIN;
+		Move *highest_scoring = nullptr;
+		Move *player_move;
+		int highest_score = INT_MIN;
 	 
 	 // Iterate through all board cells
 	 for(int i = 0; i < 8; i++)
@@ -206,4 +299,5 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 	board.doMove(highest_scoring, player_side);
 	
     return highest_scoring;
+   }
 }
